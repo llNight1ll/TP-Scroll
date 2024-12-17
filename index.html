@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="data-container"></div>
+
+    <div class="loading" id="loading">Chargement...</div>
+
+    <script>
+        let currentPage = 1;
+        const container = document.getElementById('data-container');
+        const loading = document.getElementById('loading');
+        let loadingInProgress = false;
+
+        async function loadData() {
+            if (loadingInProgress) return;
+            loadingInProgress = true;
+
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch(`index.php?page=${currentPage}`);
+                const data = await response.text();
+
+                container.innerHTML += data;
+
+                loading.style.display = 'none';
+
+                currentPage++;
+                loadingInProgress = false;
+            } catch (error) {
+                console.error('Erreur lors du chargement des données :', error);
+                loading.style.display = 'none';
+                loadingInProgress = false;
+            }
+        }
+
+        loadData();
+
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                loadData();
+            }
+        });
+    </script>
+</body>
+</html>
